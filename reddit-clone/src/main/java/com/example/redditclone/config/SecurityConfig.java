@@ -18,11 +18,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.example.redditclone.security.JwtAuthenticationFilter;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 {
 
 	private final UserDetailsService userDetailsService;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	
 	@Bean(BeanIds.AUTHENTICATION_MANAGER)
 	@Override
@@ -47,7 +51,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 	protected void configure(HttpSecurity httpSecurity) throws Exception
 	{	
 		
-		httpSecurity.csrf().disable();		 
+		httpSecurity.csrf().disable();		
+		httpSecurity.addFilterBefore(jwtAuthenticationFilter, 
+					UsernamePasswordAuthenticationFilter.class);
 	}
 	
 	@Autowired
